@@ -2,7 +2,7 @@
 
 #include "uniqueTests.h"
 #include "sharedTests.h"
-#include "listTests.h"
+#include "structTests.h"
 #include <iostream>
 
 void test();

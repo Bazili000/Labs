@@ -3,5 +3,5 @@
 void test(){
     unqTest();
     shrTest();
-    listTest();
+    structTest();
 }

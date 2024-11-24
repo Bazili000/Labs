@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 
 template<typename T>
 class SharedPtr {
@@ -14,9 +15,9 @@ class SharedPtr {
         }
 
     public:
-        SharedPtr() : ptr(nullptr), count(new size_t(0)) {}
+        SharedPtr() : ptr(nullptr), count(nullptr) {}
 
-        explicit SharedPtr(T* ptr) : ptr(ptr), count(new size_t(1)) {}
+        explicit SharedPtr(T* ptr) : ptr(ptr), count(ptr ? new size_t(1) : nullptr) {}
 
         SharedPtr(const SharedPtr& otherPtr) : ptr(otherPtr.ptr), count(otherPtr.count) {
             ++*count; 
@@ -37,18 +38,22 @@ class SharedPtr {
         }
 
         T& operator*() {
+            if (!ptr) throw std::runtime_error("Empty pointer");
             return *ptr;
         }
 
         const T& operator*() const {
+            if (!ptr) throw std::runtime_error("Empty pointer");
             return *ptr;
         }
 
         T* operator->() {
+            if (!ptr) throw std::runtime_error("Empty pointer");
             return ptr;
         }
 
         const T* operator->() const {
+            if (!ptr) throw std::runtime_error("Empty pointer");
             return ptr;
         }
 
@@ -80,17 +85,13 @@ class SharedPtr {
             std::swap(count, other.count);
         }
 
-        void reset(T* ptr = nullptr) {
+        void reset(T* newPtr = nullptr) {
             release();
-            this -> ptr = ptr;
-            if (ptr) {
-                this -> count = new size_t(1);
-            } else {
-                this -> count = new size_t(0);
-            }
+            ptr = newPtr;
+            count = newPtr ? new size_t(1) : nullptr;
         }
 
-        size_t countsSize() {
-            return *count;
+        size_t countsSize() const {
+            return count ? *count : 0;
         }
 };
